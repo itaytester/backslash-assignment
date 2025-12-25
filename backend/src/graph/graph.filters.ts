@@ -25,9 +25,6 @@ export const routeFiltersRegistry: Record<FilterName, RouteFilterFn> = {
   hasVulnerability(route, { nodeMap }) {
     return route.some((id) => {
       const v = nodeMap.get(id)?.vulnerabilities;
-      if (!!v && v.length > 0) {
-        console.log('stam');
-      }
       return !!v && v.length > 0;
     });
   },
