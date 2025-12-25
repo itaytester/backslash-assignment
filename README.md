@@ -21,6 +21,8 @@ GET /graph?filter=startPublic,hasVulnerability
 - `endSink` — route ends at a data sink (RDS, SQS)
 - `hasVulnerability` — at least one service in the route has vulnerabilities
 
+Filters are highly extendable by adding filter function to the filter registry
+
 ## Decisions
 
 - **DFS with max depth (8)** — Prevents exponential blowup on dense graphs
