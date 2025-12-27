@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { GraphService } from './graph/graph.service';
-import { RoutingService } from './graph/routing.service';
+import { RoutingService } from './routing/routing.service';
 import { type GraphResponse } from './graph/graph.types';
 import { GetGraphQueryDto } from './dto/get-graph.query.dto';
 

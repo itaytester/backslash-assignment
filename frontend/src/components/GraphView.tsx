@@ -64,6 +64,10 @@ export function GraphView({
     }
   };
 
+  const handleNodeDeselect = () => {
+    onNodeClick?.(null as unknown as BackendNode);
+  };
+
   return (
     <div
       className={`relative bg-grey-50 rounded-2xl overflow-hidden border border-grey-200 ${className}`}
@@ -88,6 +92,7 @@ export function GraphView({
           nodes={graphNodes}
           edges={graphEdges}
           layoutType="forceDirected2d"
+          onCanvasClick={handleNodeDeselect}
           labelType="all"
           draggable
           selections={selectedNodeId ? [selectedNodeId] : []}

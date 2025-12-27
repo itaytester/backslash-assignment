@@ -1,9 +1,20 @@
 import { Module } from '@nestjs/common';
-import { RoutingService } from './routing.service';
+import { ConfigModule } from '@nestjs/config';
+import Joi from 'joi';
 import { GraphService } from './graph.service';
+import { GraphRepository } from './repositories/graph.repository';
 
 @Module({
-  providers: [GraphService, RoutingService],
-  exports: [GraphService, RoutingService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: false,
+      validationSchema: Joi.object({
+        GRAPH_FILE_PATH: Joi.string(),
+      }),
+      envFilePath: '../.env',
+    }),
+  ],
+  providers: [GraphService, GraphRepository],
+  exports: [GraphService],
 })
 export class GraphModule {}

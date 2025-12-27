@@ -97,7 +97,7 @@ export function FilterBar({
 
   return (
     <div
-      className={`bg-surface rounded-2xl shadow-md border border-grey-100 overflow-hidden ${className}`}
+      className={`bg-surface rounded-2xl border border-grey-200 overflow-hidden ${className}`}
     >
       {/* Header */}
       <div className="bg-linear-to-r from-primary-500 to-primary-600 px-5 py-4">

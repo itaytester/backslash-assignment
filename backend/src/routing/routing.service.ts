@@ -1,19 +1,28 @@
+// src/routing/routing.service.ts
 import { Injectable } from '@nestjs/common';
-import { GraphNode, Route } from './graph.types';
-import { applyFilters, FilterName } from './graph.filters';
+import { GraphNode, Route } from '../graph/graph.types';
+import { applyFilters, FilterName } from '../graph/graph.filters';
 
 @Injectable()
 export class RoutingService {
+  private cachedRoutes: Route[] | null = null;
+
   findAllRoutes(
     nodes: GraphNode[],
     adjacencies: Map<string, string[]>,
     maxDepth = 8,
   ): Route[] {
+    if (this.cachedRoutes) {
+      return this.cachedRoutes;
+    }
+
     const routes: Route[] = [];
 
     for (const start of nodes) {
       this.dfs(adjacencies, start.name, [start.name], routes, maxDepth);
     }
+
+    this.cachedRoutes = routes;
 
     return routes;
   }
@@ -24,6 +33,10 @@ export class RoutingService {
     nodeMap: Map<string, GraphNode>,
   ): Route[] {
     return applyFilters(routes, filterNames, nodeMap).filteredRoutes;
+  }
+
+  invalidateCache(): void {
+    this.cachedRoutes = null;
   }
 
   private dfs(

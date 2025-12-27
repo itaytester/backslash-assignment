@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { FilterBar } from "../components/FilterBar";
 import { GraphView } from "../components/GraphView";
+import { NodeDetailsCard } from "../components/NodeDetailsCard";
+import { StatisticsCard } from "../components/StatisticsCard";
 import { useGraphQuery, type FilterName } from "../hooks/useGraphQuery";
-import { Loader2, AlertCircle } from "lucide-react";
 import type { BackendNode } from "../types/graph";
 
 export default function GraphPage() {
@@ -29,7 +31,7 @@ export default function GraphPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-grey-900">Graph Explorer</h1>
-            <p className="text-sm text-grey-500 mt-1">
+            <p className="text-sm text-grey-500 mt-1 text-left">
               Visualize and filter service dependencies
             </p>
           </div>
@@ -80,118 +82,18 @@ export default function GraphPage() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-grey-200 p-5 sticky top-6">
-              <h2 className="text-sm font-semibold text-grey-700 mb-4">
-                Node Details
-              </h2>
-
-              {selectedNode ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs text-grey-500 uppercase tracking-wide">
-                      Name
-                    </label>
-                    <p className="text-sm font-medium text-grey-900 mt-0.5">
-                      {selectedNode.name}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-grey-500 uppercase tracking-wide">
-                      Type
-                    </label>
-                    <p className="text-sm font-medium text-grey-900 mt-0.5 capitalize">
-                      {selectedNode.kind}
-                    </p>
-                  </div>
-
-                  {selectedNode.language && (
-                    <div>
-                      <label className="text-xs text-grey-500 uppercase tracking-wide">
-                        Language
-                      </label>
-                      <p className="text-sm font-medium text-grey-900 mt-0.5">
-                        {selectedNode.language}
-                      </p>
-                    </div>
-                  )}
-
-                  {selectedNode.path && (
-                    <div>
-                      <label className="text-xs text-grey-500 uppercase tracking-wide">
-                        Path
-                      </label>
-                      <p className="text-sm font-mono text-grey-700 mt-0.5 break-all">
-                        {selectedNode.path}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex gap-2">
-                    {selectedNode.publicExposed && (
-                      <span className="inline-flex items-center px-2 py-1 bg-info-100 text-info-700 text-xs font-medium rounded-full">
-                        Public
-                      </span>
-                    )}
-                    {selectedNode.vulnerabilities &&
-                      selectedNode.vulnerabilities.length > 0 && (
-                        <span className="inline-flex items-center px-2 py-1 bg-error-100 text-error-700 text-xs font-medium rounded-full">
-                          {selectedNode.vulnerabilities.length} Vulnerabilities
-                        </span>
-                      )}
-                  </div>
-
-                  {selectedNode.vulnerabilities &&
-                    selectedNode.vulnerabilities.length > 0 && (
-                      <div>
-                        <label className="text-xs text-grey-500 uppercase tracking-wide">
-                          Vulnerabilities
-                        </label>
-                        <div className="mt-2 space-y-2">
-                          {selectedNode.vulnerabilities.map((vuln, i) => (
-                            <div
-                              key={i}
-                              className="p-2 bg-error-50 border border-error-100 rounded-lg"
-                            >
-                              <span className="text-xs font-semibold text-error-600 uppercase">
-                                {vuln.severity}
-                              </span>
-                              <p className="text-xs text-error-700 mt-0.5">
-                                {vuln.message}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                </div>
-              ) : (
-                <p className="text-sm text-grey-400 italic">
-                  Click a node to see details
-                </p>
-              )}
-            </div>
+            <NodeDetailsCard
+              node={selectedNode}
+              onClose={() => setSelectedNode(null)}
+              className="sticky top-6"
+            />
 
             {data && (
-              <div className="bg-white rounded-2xl border border-grey-200 p-5 mt-4">
-                <h2 className="text-sm font-semibold text-grey-700 mb-4">
-                  Statistics
-                </h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 bg-grey-50 rounded-xl">
-                    <p className="text-2xl font-bold text-primary-600">
-                      {data.nodes.length}
-                    </p>
-                    <p className="text-xs text-grey-500 mt-1">Nodes</p>
-                  </div>
-                  <div className="text-center p-3 bg-grey-50 rounded-xl">
-                    <p className="text-2xl font-bold text-secondary-600">
-                      {data.edges.length}
-                    </p>
-                    <p className="text-xs text-grey-500 mt-1">Edges</p>
-                  </div>
-                </div>
-              </div>
+              <StatisticsCard
+                nodeCount={data.nodes.length}
+                edgeCount={data.edges.length}
+                className="mt-4"
+              />
             )}
           </div>
         </div>

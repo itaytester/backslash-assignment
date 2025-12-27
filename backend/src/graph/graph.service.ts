@@ -1,51 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
-import {
-  Graph,
-  GraphNode,
-  GraphResponse,
-  RawGraph,
-  Route,
-} from './graph.types';
-import { buildGraphFromRaw, buildSubGraphFromRoutes } from './graph.utils';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Graph, GraphNode, GraphResponse, Route } from './graph.types';
+import { buildSubGraphFromRoutes } from './graph.utils';
+import { GraphRepository } from './repositories/graph.repository';
 
 @Injectable()
-export class GraphService {
-  private readonly graph: Graph;
+export class GraphService implements OnModuleInit {
+  private graph: Graph;
 
-  constructor() {
-    const filePath = path.join(process.cwd(), '/src/graph/graph.json');
-    const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as RawGraph;
-    this.graph = buildGraphFromRaw(raw);
+  constructor(private readonly graphRepository: GraphRepository) {}
+
+  onModuleInit(): void {
+    this.graph = this.graphRepository.loadGraph();
+  }
+
+  private tryGetGraph(): Graph {
+    return this.graph ?? this.graphRepository.loadGraph();
   }
 
   getNode(id: string): GraphNode | undefined {
-    return this.graph.nodes.get(id);
+    return this.tryGetGraph().nodes.get(id);
   }
 
   getAllNodes(): Map<string, GraphNode> {
-    return this.graph.nodes;
+    return this.tryGetGraph().nodes;
   }
 
   getNeighbors(id: string): string[] {
-    return this.graph.adjacency.get(id) ?? [];
+    return this.tryGetGraph().adjacency.get(id) ?? [];
   }
 
   getAdjacencies(): Map<string, string[]> {
-    return this.graph.adjacency;
+    return this.tryGetGraph().adjacency;
   }
 
   getAllNodeIds(): string[] {
-    return Array.from(this.graph.nodes.keys());
+    return Array.from(this.tryGetGraph().nodes.keys());
   }
 
   getEdges(): { from: string; to: string }[] {
-    return this.graph.edges;
+    return this.tryGetGraph().edges;
   }
 
   getGraphBasedOnRoutes(routes: Route[]): GraphResponse {
-    const graph = buildSubGraphFromRoutes(routes, this.graph.nodes);
+    const graph = buildSubGraphFromRoutes(routes, this.tryGetGraph().nodes);
     return {
       edges: graph.edges,
       nodes: Array.from(graph.nodes.values()),

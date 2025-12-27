@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoutingService } from './routing.service';
-import { GraphNode } from './graph.types';
+import { GraphNode } from '../graph/graph.types';
 
 describe('RoutingService', () => {
   let service: RoutingService;
@@ -11,6 +11,7 @@ describe('RoutingService', () => {
     }).compile();
 
     service = module.get<RoutingService>(RoutingService);
+    service.invalidateCache(); // Clear cache between tests
   });
 
   it('should be defined', () => {
